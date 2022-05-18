@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<mavlink>
+    <version>3</version>
+    <enums>
+        <enum name="MAV_CMD">
+            <entry value="0" name="OBTIAN_SYS_STATUS">
+                <description>唤醒对应设备并获取系统状态.</description>
+            </entry>
+            <entry value="1" name="SET_DORMANT">
+                <description>设置对应传感器休眠.</description>
+            </entry>
+            <entry value="3" name="SET_DATA_MASK_X">
+                <description>设置对应传感器X轴数据是否上报.</description>
+            </entry>
+            <entry value="4" name="SET_DATA_MASK_Y">
+                <description>设置对应传感器Y轴数据是否上报.</description>
+            </entry>
+            <entry value="5" name="SET_DATA_MASK_Z">
+                <description>设置对应传感器Z轴数据是否上报.</description>
+            </entry>
+        </enum>
+        <enum name="WIFI_CONFIG_AP_MODE">
+            <description>WiFi Mode.</description>
+            <entry value="0" name="WIFI_CONFIG_AP_MODE_UNDEFINED">
+                <description>WiFi mode is undefined.</description>
+            </entry>
+            <entry value="1" name="WIFI_CONFIG_AP_MODE_AP">
+                <description>WiFi configured as an access point.</description>
+            </entry>
+            <entry value="2" name="WIFI_CONFIG_AP_MODE_STATION">
+                <description>WiFi configured as a station connected to an existing local WiFi network.</description>
+            </entry>
+            <entry value="3" name="WIFI_CONFIG_AP_MODE_DISABLED">
+                <description>WiFi disabled.</description>
+            </entry>
+        </enum>
+        <enum name="WIFI_CONFIG_AP_RESPONSE">
+            <description>Possible responses from a WIFI_CONFIG_AP message.</description>
+            <entry value="0" name="WIFI_CONFIG_AP_RESPONSE_UNDEFINED">
+                <description>Undefined response. Likely an indicative of a system that doesn't support this request.</description>
+            </entry>
+            <entry value="1" name="WIFI_CONFIG_AP_RESPONSE_ACCEPTED">
+                <description>Changes accepted.</description>
+            </entry>
+            <entry value="2" name="WIFI_CONFIG_AP_RESPONSE_REJECTED">
+                <description>Changes rejected.</description>
+            </entry>
+            <entry value="3" name="WIFI_CONFIG_AP_RESPONSE_MODE_ERROR">
+                <description>Invalid Mode.</description>
+            </entry>
+            <entry value="4" name="WIFI_CONFIG_AP_RESPONSE_SSID_ERROR">
+                <description>Invalid SSID.</description>
+            </entry>
+            <entry value="5" name="WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR">
+                <description>Invalid Password.</description>
+            </entry>
+        </enum>
+        <enum name="MAVLINK_DATA_STREAM_TYPE">
+            <entry value="0" name="MAVLINK_DATA_STREAM_IMG_JPEG">
+                <description/>
+            </entry>
+            <entry value="1" name="MAVLINK_DATA_STREAM_IMG_BMP">
+                <description/>
+            </entry>
+            <entry value="2" name="MAVLINK_DATA_STREAM_IMG_RAW8U">
+                <description/>
+            </entry>
+            <entry value="3" name="MAVLINK_DATA_STREAM_IMG_RAW32U">
+                <description/>
+            </entry>
+            <entry value="4" name="MAVLINK_DATA_STREAM_IMG_PGM">
+                <description/>
+            </entry>
+            <entry value="5" name="MAVLINK_DATA_STREAM_IMG_PNG">
+                <description/>
+            </entry>
+        </enum>
+    </enums>
+    <messages>
+        <message id="1" name="SYS_STATUS">
+            <description>Status </description>
+            <field type="uint16_t" name="load" units="d%">Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000</field>
+            <field type="uint16_t" name="voltage_battery" units="mV" invalid="UINT16_MAX">Battery voltage, UINT16_MAX: Voltage not sent by autopilot</field>
+            <field type="int16_t" name="current_battery" units="cA" invalid="-1">Battery current, -1: Current not sent by autopilot</field>
+            <field type="int8_t" name="battery_remaining" units="%" invalid="-1">Battery energy remaining, -1: Battery remaining energy not sent by autopilot</field>
+            <field type="uint16_t" name="drop_rate_comm" units="c%">Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+            <field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+            <field type="uint16_t" name="errors_count1">Autopilot-specific errors</field>
+            <field type="uint16_t" name="errors_count2">Autopilot-specific errors</field>
+            <field type="uint16_t" name="errors_count3">Autopilot-specific errors</field>
+            <field type="uint16_t" name="errors_count4">Autopilot-specific errors</field>
+        </message>   
+        <message id="10" name="COMMAND_LONG">
+            <description>Send a command with up to seven parameters to the MAV. The command microservice is documented at https://mavlink.io/en/services/command.html</description>
+            <field type="uint8_t" name="target_system">System which should execute the command</field>
+            <field type="uint8_t" name="target_component">Component which should execute the command, 0 for all components</field>
+            <field type="uint16_t" name="command" enum="MAV_CMD">Command ID (of command to send).</field>
+            <field type="uint8_t" name="confirmation">0: First transmission of this command. 1-255: Confirmation transmissions (e.g. for kill command)</field>
+            <field type="float" name="param1" invalid="NaN">Parameter 1 (for the specific command).</field>
+            <field type="float" name="param2" invalid="NaN">Parameter 2 (for the specific command).</field>
+            <field type="float" name="param3" invalid="NaN">Parameter 3 (for the specific command).</field>
+            <field type="float" name="param4" invalid="NaN">Parameter 4 (for the specific command).</field>
+            <field type="float" name="param5" invalid="NaN">Parameter 5 (for the specific command).</field>
+            <field type="float" name="param6" invalid="NaN">Parameter 6 (for the specific command).</field>
+            <field type="float" name="param7" invalid="NaN">Parameter 7 (for the specific command).</field>
+        </message>
+        <message id="11" name="WIFI_CONFIG_AP">
+            <description>Configure WiFi AP SSID, password, and mode. This message is re-emitted as an acknowledgement by the AP. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE</description>
+            <field type="char[32]" name="ssid">Name of Wi-Fi network (SSID). Blank to leave it unchanged when setting. Current SSID when sent back as a response.</field>
+            <field type="char[64]" name="password">Password. Blank for an open AP. MD5 hash when message is sent back as a response.</field>
+            <extensions/>
+            <field type="int8_t" name="mode" enum="WIFI_CONFIG_AP_MODE">WiFi Mode.</field>
+            <field type="int8_t" name="response" enum="WIFI_CONFIG_AP_RESPONSE">Message acceptance response (sent back to GS).</field>
+        </message>
+        <message id="20" name="DATA_TRANSMISSION_HANDSHAKE">
+            <description>Handshake message to initiate, control and stop image streaming when using the Image Transmission Protocol: https://mavlink.io/en/services/image_transmission.html.</description>
+            <field type="uint8_t" name="type" enum="MAVLINK_DATA_STREAM_TYPE">Type of requested/acknowledged data.</field>
+            <field type="uint32_t" name="size" units="bytes">total data size (set on ACK only).</field>
+            <field type="uint16_t" name="width">Width of a matrix or image.</field>
+            <field type="uint16_t" name="height">Height of a matrix or image.</field>
+            <field type="uint16_t" name="packets">Number of packets being sent (set on ACK only).</field>
+            <field type="uint8_t" name="payload" units="bytes">Payload size per packet (normally 253 byte, see DATA field size in message ENCAPSULATED_DATA) (set on ACK only).</field>
+            <field type="uint8_t" name="jpg_quality" units="%">JPEG quality. Values: [1-100].</field>
+        </message>
+        <message id="21" name="ENCAPSULATED_DATA">
+            <description>Data packet for images sent using the Image Transmission Protocol: https://mavlink.io/en/services/image_transmission.html.</description>
+            <field type="uint16_t" name="seqnr">sequence number (starting with 0 on every transmission)</field>
+            <field type="uint8_t[253]" name="data">image data bytes</field>
+        </message>
+    </messages>
+</mavlink>
